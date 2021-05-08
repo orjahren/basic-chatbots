@@ -1,5 +1,5 @@
-# BasicChatBot
-The most basic form of chatbot possible. Minimal Java implementation from scratch
+# JBasicChatBot
+The most basic form of chatbot possible. Minimal Java implementation from scratch using TFIDF-vector-similarity
 
 # Usage:
 ```java
@@ -11,8 +11,14 @@ try {
     e.printStackTrace();
     System.exit(1);
 }
-String input = "YOUR INPUT";
-System.out.println(cb.getResponse(input));
+
+Scanner scanner = new Scanner(System.in);
+while (scanner.hasNextLine()) {
+    String input = scanner.nextLine();
+    String response = cb.getResponse(input);
+    
+    System.out.printf("Bot: %s%n", response);
+}
  ```
  ...Or instantiate it as `Chatbot cb = new Chatbot(file);` and use the `Chatbot.getResponse(input)`-method as you would want
 
