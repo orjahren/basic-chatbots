@@ -1,6 +1,19 @@
 # BasicChatBot
 The most basic form of chatbot possible. Minimal Java implementation from scratch
 
+# Usage:
+```java
+Chatbot cb = null;
+try {
+    cb = new Chatbot("lotr.en");
+}catch(FileNotFoundException e) {
+    //handle file not found
+    e.printStackTrace();
+    System.exit(1);
+}
+String input = "YOUR INPUT";
+System.out.println(cb.getResponse(input));
+ ```
 
 # Some examples of use:
 
