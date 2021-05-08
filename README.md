@@ -14,6 +14,7 @@ try {
 String input = "YOUR INPUT";
 System.out.println(cb.getResponse(input));
  ```
+ ...Or instantiate it as `Chatbot cb = new Chatbot(file);` and use the `Chatbot.getResponse(input)`-method as you would want
 
 # Some examples of use:
 
