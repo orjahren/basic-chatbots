@@ -30,7 +30,15 @@ class Chatbot {
             e.printStackTrace();
             System.exit(1);
         }
-        cb.test();
+        
+        // Start a "conversation" with our bot
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNextLine()) {
+            String input = scanner.nextLine();
+            String response = cb.getResponse(input);
+            
+            System.out.printf("Bot: %s%n", response);
+        }
     }
 
     //method for demonstrating some sentences
