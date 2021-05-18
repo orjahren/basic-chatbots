@@ -14,12 +14,16 @@ class Chatbot {
     List<HashMap<String, Double>> tfidfs;
     //map of global token frequencies
     HashMap<String, Double> docFrecs; 
-
+    
     public Chatbot(String fileName) throws FileNotFoundException {
         this.utterances = new ArrayList<ArrayList<String>>();        
         this.tfidfs = new ArrayList<>();
-        this.docFrecs = regnDocFrecs();
         readFile(fileName);
+        this.docFrecs = regnDocFrecs();
+        for(ArrayList<String> utterance : this.utterances) {
+            HashMap<String, Double> tfidf = getTfidf(utterance);
+            tfidfs.add(tfidf);
+        }
     }
 
     public static void main(String[] args) {
@@ -71,8 +75,6 @@ class Chatbot {
         while(scanner.hasNextLine()) {
             String l = scanner.nextLine();
             ArrayList<String> ll = tokenise(l);
-            HashMap<String, Double> tfidf = getTfidf(ll);
-            tfidfs.add(tfidf);
             utterances.add(ll);
         }
         scanner.close();
