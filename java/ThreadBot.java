@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Collections;
 
-class Chatbot {
+class ThreadBot {
     class LineThread implements Runnable {
         String line;
         DataMonitor mon;
@@ -26,42 +25,13 @@ class Chatbot {
         }
     }
 
-    static private class DataMonitor {
-        private ArrayList<ArrayList<String>> utterances;
-
-        private Semaphore sem;
-
-        DataMonitor() {
-            this.utterances = new ArrayList<ArrayList<String>>();
-            this.sem = new Semaphore(1);
-
-        }
-
-        public void write(ArrayList<String> sl) {
-            try {
-
-                sem.acquire();
-            } catch (InterruptedException e) {
-
-                // Thread.currentThread().si
-            }
-            utterances.add(sl);
-            sem.release();
-        }
-
-        public synchronized ArrayList<ArrayList<String>> read() {
-            return this.utterances;
-        }
-
-    }
-
     // list of tokenised utterances
     // list of term-frequency-inverted-document-frequencies
     static protected List<HashMap<String, Double>> tfidfs = new ArrayList<>();
     // map of global token frequencies
     static protected HashMap<String, Double> docFrecs;
 
-    public Chatbot(String fileName, DataMonitor mon) throws FileNotFoundException {
+    public ThreadBot(String fileName, DataMonitor mon) throws FileNotFoundException {
         System.out.println("Commencing reading the file.");
         readFile(fileName, mon);
         System.out.println("File is read.");
@@ -79,10 +49,10 @@ class Chatbot {
     }
 
     public static void main(String[] args) {
-        Chatbot cb = null;
-        DataMonitor mon = new Chatbot.DataMonitor();
+        ThreadBot cb = null;
+        DataMonitor mon = new DataMonitor();
         try {
-            cb = new Chatbot("lotr.en", mon);
+            cb = new ThreadBot("lotr.en", mon);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
