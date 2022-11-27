@@ -97,7 +97,7 @@ class Chatbot {
             }
         }
         // retrive response
-        ArrayList<String> responseTokenList = utterances.get(idx);
+        ArrayList<String> responseTokenList = new ArrayList<>(utterances.get(idx));
         // remove first token
         String response = responseTokenList.remove(0);
         // make first letter capital
