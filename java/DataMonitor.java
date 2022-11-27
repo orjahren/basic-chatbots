@@ -8,7 +8,7 @@ class DataMonitor {
 
     DataMonitor() {
         this.utterances = new ArrayList<ArrayList<String>>();
-        this.sem = new Semaphore(0);
+        this.sem = new Semaphore(1);
 
     }
 
@@ -24,7 +24,7 @@ class DataMonitor {
         sem.release();
     }
 
-    public ArrayList<ArrayList<String>> read() {
+    public synchronized ArrayList<ArrayList<String>> read() {
         return this.utterances;
     }
 

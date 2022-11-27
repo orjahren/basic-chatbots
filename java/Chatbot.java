@@ -21,7 +21,7 @@ class Chatbot {
         readFile(fileName);
         this.docFrecs = regnDocFrecs();
         for (ArrayList<String> utterance : this.utterances) {
-            HashMap<String, Double> tfidf = getTfidf(utterance);
+            HashMap<String, Double> tfidf = getTfidf(utterance, utterances.size());
             tfidfs.add(tfidf);
         }
     }
@@ -86,7 +86,7 @@ class Chatbot {
 
     // method taking an input query and returning a string response
     public String getResponse(String query) {
-        HashMap<String, Double> q = getTfidf(tokenise(query));
+        HashMap<String, Double> q = this.getTfidf(tokenise(query), utterances.size());
         double mesteCs = -9999999;
         int idx = 0;
         for (int i = 0; i < tfidfs.size(); i++) {
@@ -113,31 +113,15 @@ class Chatbot {
         return response;
     }
 
-    // method for computing the tfidf of a tokenised input
-    private HashMap<String, Double> getTfidf(ArrayList<String> utterance) {
-        HashMap<String, Double> tfidf_vals = new HashMap<>();
-        HashMap<String, Integer> counts = new HashMap<>();
-        // find frequency of all tokens in the utterance
-        for (String s : utterance) {
-            int x = Collections.frequency(utterance, s);
-            counts.put(s, x);
-        }
-        // calculate tfidf for every type
-        for (String s : counts.keySet()) {
-            double idf = Math.log(utterances.size() / (docFrecs.getOrDefault(s, new Double(0)) + 1));
-            tfidf_vals.put(s, idf * counts.get(s));
-        }
-        return tfidf_vals;
-    }
-
     // method for computing document frequency
     private HashMap<String, Double> regnDocFrecs() {
         HashMap<String, Double> df = new HashMap<>();
         for (ArrayList<String> ut : utterances) {
             HashSet<String> hs = new HashSet<>();
+
             for (String s : ut) {
                 if (!hs.contains(s)) {
-                    df.put(s, df.getOrDefault(s, new Double(0)) + 1);
+                    df.put(s, df.getOrDefault(s, new Double(-1)) + 1);
                     hs.add(s);
                 }
             }
@@ -145,8 +129,27 @@ class Chatbot {
         return df;
     }
 
+    // method for computing the tfidf of a tokenised input
+    protected HashMap<String, Double> getTfidf(ArrayList<String> utterance,
+            final int n_utterances) {
+        HashMap<String, Double> tfidf_vals = new HashMap<>();
+        HashMap<String, Integer> counts = new HashMap<>();
+        // find frequency of all tokens in the utterance
+        for (String s : utterance) {
+            int x = Collections.frequency(utterance, s);
+            counts.put(s, x);
+        }
+
+        // calculate tfidf for every type
+        for (String s : counts.keySet()) {
+            double idf = Math.log(n_utterances / (docFrecs.getOrDefault(s, new Double(0)) + 1));
+            tfidf_vals.put(s, idf * counts.get(s));
+        }
+        return tfidf_vals;
+    }
+
     // method for basic simple tokenization
-    private ArrayList<String> tokenise(String s) {
+    public static ArrayList<String> tokenise(String s) {
         ArrayList<String> ll = new ArrayList<>();
         for (String x : s.split(" ")) {
             ll.add(x.toLowerCase().replaceAll("[\n\r]", ""));
@@ -155,7 +158,7 @@ class Chatbot {
     }
 
     // method for calculating vector norm
-    private double getNorm(HashMap<String, Double> tfidf) {
+    protected double getNorm(HashMap<String, Double> tfidf) {
         double sum = 0;
         for (Double f : tfidf.values()) {
             sum += Math.pow(f, 2);
@@ -165,7 +168,7 @@ class Chatbot {
 
     // method for computing the cosine similarity of two vectors. Vecs here
     // represented as hashmaps
-    private double computeCosine(HashMap<String, Double> tf1, HashMap<String, Double> tf2) {
+    protected double computeCosine(HashMap<String, Double> tf1, HashMap<String, Double> tf2) {
         double dp = 0;
         for (String s : tf1.keySet()) {
             if (tf2.containsKey(s)) {
