@@ -159,7 +159,7 @@ class ThreadBot extends Chatbot {
 
             for (String s : ut) {
                 if (!hs.contains(s)) {
-                    df.put(s, df.getOrDefault(s, new Double(-1)) + 1);
+                    df.put(s, df.getOrDefault(s, Double.valueOf(-1)));
                     hs.add(s);
                 }
             }

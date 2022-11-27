@@ -121,7 +121,7 @@ class Chatbot {
 
             for (String s : ut) {
                 if (!hs.contains(s)) {
-                    df.put(s, df.getOrDefault(s, new Double(-1)) + 1);
+                    df.put(s, df.getOrDefault(s, Double.valueOf(-1)) + 1);
                     hs.add(s);
                 }
             }
@@ -142,7 +142,7 @@ class Chatbot {
 
         // calculate tfidf for every type
         for (String s : counts.keySet()) {
-            double idf = Math.log(n_utterances / (docFrecs.getOrDefault(s, new Double(0)) + 1));
+            double idf = Math.log(n_utterances / (docFrecs.getOrDefault(s, Double.valueOf(0)) + 1));
             tfidf_vals.put(s, idf * counts.get(s));
         }
         return tfidf_vals;
