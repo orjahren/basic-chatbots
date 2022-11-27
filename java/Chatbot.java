@@ -9,16 +9,24 @@ import java.util.Collections;
 
 class Chatbot {
     // list of tokenised utterances
-    List<ArrayList<String>> utterances;
+    protected List<ArrayList<String>> utterances;
     // list of term-frequency-inverted-document-frequencies
-    List<HashMap<String, Double>> tfidfs;
+    protected List<HashMap<String, Double>> tfidfs;
     // map of global token frequencies
-    HashMap<String, Double> docFrecs;
+    protected HashMap<String, Double> docFrecs;
 
     public Chatbot(String fileName) throws FileNotFoundException {
         this.utterances = new ArrayList<ArrayList<String>>();
         this.tfidfs = new ArrayList<>();
+        init(fileName);
+    }
+
+    protected void init(String fileName) throws FileNotFoundException {
+
+        System.out.println("Commencing reading the file.");
         readFile(fileName);
+        System.out.println("File is read.");
+        System.out.println("Calculating base tf-idf scores");
         this.docFrecs = regnDocFrecs();
         for (ArrayList<String> utterance : this.utterances) {
             HashMap<String, Double> tfidf = getTfidf(utterance, utterances.size());
@@ -42,7 +50,7 @@ class Chatbot {
             if (input.equals("!")) {
                 break;
             }
-            String response = cb.getResponse(input);
+            String response = cb.getResponse(cb.utterances, input);
 
             System.out.printf("Bot: %s%n", response);
         }
@@ -67,12 +75,12 @@ class Chatbot {
                 "Les francais doivent mourir pour leur empereur"
         };
         for (String s : ts) {
-            System.out.println(s + " : " + getResponse(s) + "\n");
+            System.out.println(s + " : " + this.getResponse(this.utterances, s) + "\n");
         }
     }
 
     // reads an input file and calculates tfidfs for the vectorized input
-    private void readFile(String fileName) throws FileNotFoundException {
+    protected void readFile(String fileName) throws FileNotFoundException {
         File file = new File(fileName);
         Scanner scanner = new Scanner(file);
 
@@ -85,12 +93,12 @@ class Chatbot {
     }
 
     // method taking an input query and returning a string response
-    public String getResponse(String query) {
+    public String getResponse(List<ArrayList<String>> utterances, String query) {
         HashMap<String, Double> q = this.getTfidf(tokenise(query), utterances.size());
         double mesteCs = -9999999;
         int idx = 0;
         for (int i = 0; i < tfidfs.size(); i++) {
-            double cs = computeCosine(q, tfidfs.get(i));
+            double cs = this.computeCosine(q, tfidfs.get(i));
             if (cs > mesteCs) {
                 mesteCs = cs;
                 idx = i + 1;
@@ -114,7 +122,7 @@ class Chatbot {
     }
 
     // method for computing document frequency
-    private HashMap<String, Double> regnDocFrecs() {
+    protected HashMap<String, Double> regnDocFrecs() {
         HashMap<String, Double> df = new HashMap<>();
         for (ArrayList<String> ut : utterances) {
             HashSet<String> hs = new HashSet<>();

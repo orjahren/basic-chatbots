@@ -7,6 +7,6 @@ class TestThread {
         System.out.println("Initting bot class.");
         ThreadBot cb = new ThreadBot("../lotr.en", mon);
         System.out.println("Running test method.");
-        cb.test(mon);
+        cb.test();
     }
 }
