@@ -22,11 +22,7 @@ class Chatbot {
     }
 
     protected void init(String fileName) throws FileNotFoundException {
-
-        System.out.println("Commencing reading the file.");
         readFile(fileName);
-        System.out.println("File is read.");
-        System.out.println("Calculating base tf-idf scores");
         this.docFrecs = regnDocFrecs();
         for (ArrayList<String> utterance : this.utterances) {
             HashMap<String, Double> tfidf = getTfidf(utterance, utterances.size());
@@ -40,7 +36,6 @@ class Chatbot {
     }
 
     protected void converse() {
-
         // Start a "conversation" with our bot
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
@@ -48,7 +43,7 @@ class Chatbot {
             if (input.equals("!")) {
                 break;
             }
-            String response = this.getResponse(this.utterances, input);
+            String response = this.getResponse(input);
 
             System.out.printf("Bot: %s%n", response);
         }
@@ -73,7 +68,7 @@ class Chatbot {
                 "Les francais doivent mourir pour leur empereur"
         };
         for (String s : ts) {
-            System.out.println(s + " : " + this.getResponse(this.utterances, s) + "\n");
+            System.out.println(s + " : " + this.getResponse(s) + "\n");
         }
     }
 
@@ -91,19 +86,19 @@ class Chatbot {
     }
 
     // method taking an input query and returning a string response
-    public String getResponse(List<ArrayList<String>> utterances, String query) {
-        HashMap<String, Double> q = this.getTfidf(tokenise(query), utterances.size());
+    public String getResponse(String query) {
+        HashMap<String, Double> q = this.getTfidf(tokenise(query), this.utterances.size());
         double mesteCs = -9999999;
         int idx = 0;
-        for (int i = 0; i < tfidfs.size(); i++) {
-            double cs = this.computeCosine(q, tfidfs.get(i));
+        for (int i = 0; i < this.tfidfs.size(); i++) {
+            double cs = this.computeCosine(q, this.tfidfs.get(i));
             if (cs > mesteCs) {
                 mesteCs = cs;
                 idx = i + 1;
             }
         }
         // retrive response
-        ArrayList<String> responseTokenList = new ArrayList<>(utterances.get(idx));
+        ArrayList<String> responseTokenList = new ArrayList<>(this.utterances.get(idx));
         // remove first token
         String response = responseTokenList.remove(0);
         // make first letter capital
@@ -136,8 +131,7 @@ class Chatbot {
     }
 
     // method for computing the tfidf of a tokenised input
-    protected HashMap<String, Double> getTfidf(ArrayList<String> utterance,
-            final int n_utterances) {
+    protected HashMap<String, Double> getTfidf(ArrayList<String> utterance, final int n_utterances) {
         HashMap<String, Double> tfidf_vals = new HashMap<>();
         HashMap<String, Integer> counts = new HashMap<>();
         // find frequency of all tokens in the utterance
