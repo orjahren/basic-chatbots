@@ -34,14 +34,12 @@ class Chatbot {
         }
     }
 
-    public static void main(String[] args) {
-        Chatbot cb = null;
-        try {
-            cb = new Chatbot("../lotr.en");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    public static void main(String[] args) throws FileNotFoundException {
+        Chatbot cb = new Chatbot("../lotr.en");
+        cb.converse();
+    }
+
+    protected void converse() {
 
         // Start a "conversation" with our bot
         Scanner scanner = new Scanner(System.in);
@@ -50,7 +48,7 @@ class Chatbot {
             if (input.equals("!")) {
                 break;
             }
-            String response = cb.getResponse(cb.utterances, input);
+            String response = this.getResponse(this.utterances, input);
 
             System.out.printf("Bot: %s%n", response);
         }

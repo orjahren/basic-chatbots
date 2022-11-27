@@ -28,10 +28,7 @@ class ThreadBot extends Chatbot {
     public ThreadBot(String fileName, DataMonitor mon) throws FileNotFoundException {
         super(fileName);
         this.mon = mon;
-        System.out.println("Commencing reading the file in thread.");
         readFile(fileName);
-        System.out.println("File is read.");
-        System.out.println("Calculating base tf-idf scores");
         // TODO: This section should be parallellized
         this.docFrecs = regnDocFrecs();
         List<ArrayList<String>> utterances = this.mon.read();
@@ -41,7 +38,6 @@ class ThreadBot extends Chatbot {
             HashMap<String, Double> tfidf = getTfidf(utterance, utterances.size());
             tfidfs.add(tfidf);
         }
-        System.out.println("done.");
     }
 
     @Override
@@ -49,29 +45,10 @@ class ThreadBot extends Chatbot {
         return;
     }
 
-    public static void main(String[] args) {
-        ThreadBot cb = null;
+    public static void main(String[] args) throws FileNotFoundException {
         DataMonitor mon = new DataMonitor();
-        try {
-            cb = new ThreadBot("../lotr.en", mon);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        final ArrayList<ArrayList<String>> utterances = mon.read();
-
-        // Start a "conversation" with our bot
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            System.out.println("Si noe til boten: ");
-            String input = scanner.nextLine();
-            String response = cb.getResponse(utterances, input);
-
-            System.out.printf("Bot: %s%n", response);
-        }
-
-        scanner.close();
+        ThreadBot cb = new ThreadBot("../lotr.en", mon);
+        cb.converse();
     }
 
     // reads an input file and calculates tfidfs for the vectorized input
